@@ -8,9 +8,11 @@ import (
 	"go/token"
 	"go/types"
 	"log"
+	"os"
 )
 
 func main() {
+	errors := false
 	fset := token.NewFileSet()
 
 	astPkgs, err := parser.ParseDir(fset, ".", nil, 0)
@@ -56,7 +58,8 @@ func main() {
 				}
 
 				if b, ok := obj.(*types.Builtin); ok && (b.Name() == "panic") {
-					fmt.Printf("%s\t use of %s\n", fset.Position(pos), b.Name())
+					fmt.Printf("%s:\t use of %s\n", fset.Position(pos), b.Name())
+					errors = true
 				}
 
 				return true
@@ -64,6 +67,7 @@ func main() {
 		}
 	}
 
-	return
-
+	if errors {
+		os.Exit(1)
+	}
 }
