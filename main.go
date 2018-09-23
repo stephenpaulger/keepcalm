@@ -93,11 +93,17 @@ func createSubPackageChecker(errors *bool) filepath.WalkFunc {
 }
 
 func main() {
+	var inputPath string
+	var err error
 	errors := false
 
-	inputPath := os.Args[1]
+	if len(os.Args) > 1 {
+		inputPath = os.Args[1]
+	} else {
+		inputPath, err = os.Getwd()
+	}
 
-	err := filepath.Walk(inputPath, createSubPackageChecker(&errors))
+	err = filepath.Walk(inputPath, createSubPackageChecker(&errors))
 
 	if err != nil {
 		fmt.Printf("error walking path: %q: %v\n", inputPath, err)
